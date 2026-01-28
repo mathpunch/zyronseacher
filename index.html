@@ -63,18 +63,7 @@
             padding: 40px;
             position: relative;
             z-index: 10;
-            animation: slideUp 0.7s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(25px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            opacity: 1;
         }
 
         .titleWrap {
@@ -91,12 +80,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 0.5rem;
-            animation: fadeTitle 0.9s ease-out 0.15s both;
-        }
-
-        @keyframes fadeTitle {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .subtext {
@@ -105,13 +88,11 @@
             color: #888;
             letter-spacing: 3px;
             text-transform: uppercase;
-            animation: fadeTitle 0.9s ease-out 0.3s both;
         }
 
         .inputWrap {
             position: relative;
             margin-bottom: 1.5rem;
-            animation: fadeTitle 0.9s ease-out 0.5s both;
         }
 
         .glassBox {
@@ -171,7 +152,6 @@
             text-transform: uppercase;
             position: relative;
             overflow: hidden;
-            animation: fadeTitle 0.9s ease-out 0.7s both;
         }
 
         .searchBtn::before {
@@ -206,7 +186,6 @@
             font-size: 0.85rem;
             color: #666;
             letter-spacing: 0.5px;
-            animation: fadeTitle 0.9s ease-out 0.85s both;
         }
 
         .divLine {
@@ -214,12 +193,6 @@
             height: 2px;
             background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 100%);
             margin: 2rem auto;
-            animation: growLine 0.8s ease-out 0.4s both;
-        }
-
-        @keyframes growLine {
-            from { width: 0; }
-            to { width: 60px; }
         }
 
         .dot {
@@ -288,7 +261,7 @@
             <button type="submit" class="searchBtn">Search</button>
         </form>
         
-        <p class="btmText">Powered by DuckDuckGo • Privacy-focused search</p>
+        <p class="btmText">Direct URL Navigation • Fast & Simple</p>
     </div>
 
     <script>
@@ -301,8 +274,13 @@
             var url = input.value.trim();
             
             if (url) {
-                url = url.replace(/^https?:\/\//, '');
-                window.location.href = 'https://duckduckgo.com/?q=' + encodeURIComponent(url);
+                // add https:// if no protocol specified
+                if (!url.match(/^https?:\/\//)) {
+                    url = 'https://' + url;
+                }
+                
+                // go directly to the URL
+                window.location.href = url;
             }
         });
 
