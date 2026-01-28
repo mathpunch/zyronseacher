@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zyron Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* bg animation - took forever to get this looking right */
+        .bgGrad {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            animation: spinBg 30s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spinBg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .gridOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .wrapper {
+            text-align: center;
+            width: 100%;
+            max-width: 650px;
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.7s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .titleWrap {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: fadeTitle 0.9s ease-out 0.15s both;
+        }
+
+        @keyframes fadeTitle {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .subtext {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            color: #888;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeTitle 0.9s ease-out 0.3s both;
+        }
+
+        .inputWrap {
+            position: relative;
+            margin-bottom: 1.5rem;
+            animation: fadeTitle 0.9s ease-out 0.5s both;
+        }
+
+        .glassBox {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 8px;
+            transition: all 0.35s ease;
+        }
+
+        .glassBox:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        #urlBox {
+            width: 100%;
+            padding: 22px 28px;
+            font-size: 1.2rem;
+            font-family: 'DM Sans', sans-serif;
+            background: transparent;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            outline: none;
+        }
+
+        #urlBox::placeholder {
+            color: #555;
+        }
+
+        .searchIco {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .searchBtn {
+            padding: 18px 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            animation: fadeTitle 0.9s ease-out 0.7s both;
+        }
+
+        .searchBtn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+
+        .searchBtn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .searchBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(255, 255, 255, 0.15);
+        }
+
+        .searchBtn:active {
+            transform: translateY(-1px);
+        }
+
+        .btmText {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: #666;
+            letter-spacing: 0.5px;
+            animation: fadeTitle 0.9s ease-out 0.85s both;
+        }
+
+        .divLine {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, #ffffff 0%, #a0a0a0 100%);
+            margin: 2rem auto;
+            animation: growLine 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes growLine {
+            from { width: 0; }
+            to { width: 60px; }
+        }
+
+        .dot {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatAnim 6s ease-in-out infinite;
+        }
+
+        @keyframes floatAnim {
+            0%, 100% { 
+                transform: translateY(0) translateX(0); 
+                opacity: 0; 
+            }
+            50% { opacity: 1; }
+        }
+
+        .dot:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 8s; }
+        .dot:nth-child(2) { left: 30%; animation-delay: 1s; animation-duration: 7s; }
+        .dot:nth-child(3) { left: 50%; animation-delay: 2s; animation-duration: 9s; }
+        .dot:nth-child(4) { left: 70%; animation-delay: 1.5s; animation-duration: 6s; }
+        .dot:nth-child(5) { left: 90%; animation-delay: 0.5s; animation-duration: 8s; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .wrapper { padding: 20px; }
+            #urlBox { font-size: 1rem; padding: 18px 24px; }
+            .searchBtn { padding: 16px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bgGrad"></div>
+    <div class="gridOverlay"></div>
+    
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+
+    <div class="wrapper">
+        <div class="titleWrap">
+            <h1>Zyron</h1>
+            <div class="divLine"></div>
+            <p class="subtext">URL Explorer</p>
+        </div>
+        
+        <form id="searchForm">
+            <div class="inputWrap glassBox">
+                <input 
+                    type="text" 
+                    id="urlBox" 
+                    placeholder="Enter A Website You Want To Go To" 
+                    autocomplete="off"
+                    required
+                >
+                <svg class="searchIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </div>
+            <button type="submit" class="searchBtn">Search</button>
+        </form>
+        
+        <p class="btmText">Powered by DuckDuckGo • Privacy-focused search</p>
+    </div>
+
+    <script>
+        var form = document.getElementById('searchForm');
+        var input = document.getElementById('urlBox');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var url = input.value.trim();
+            
+            if (url) {
+                url = url.replace(/^https?:\/\//, '');
+                window.location.href = 'https://duckduckgo.com/?q=' + encodeURIComponent(url);
+            }
+        });
+
+        // auto focus on load
+        window.onload = function() {
+            setTimeout(function() {
+                input.focus();
+            }, 100);
+        };
+
+        input.addEventListener('focus', function() {
+            this.parentElement.style.boxShadow = '0 0 0 4px rgba(255, 255, 255, 0.05)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.boxShadow = 'none';
+        });
+    </script>
+</body>
+</html>
